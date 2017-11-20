@@ -4,7 +4,9 @@ const gulp = require('gulp'),
 	watch = require('gulp-watch'),
 	browserSync = require('browser-sync'),
 	sass = require('gulp-sass'),
-	concat = require('gulp-concat');
+	concat = require('gulp-concat'),
+	uglify = require('gulp-uglifyjs'),
+	imagemin = require('gulp-imagemin');
 
 gulp.task('html', () => {
 	gulp.src('./src/*.html')
@@ -22,16 +24,22 @@ gulp.task('sass', () => {
 			stream: true
 		}));
 });
-gulp.task('js', () => {
 
+
+gulp.task('js', () => {
 	gulp.src('./src/js/*.js')
 		.pipe(concat('main.js'))
 		.pipe(gulp.dest('./dist/js'))
 		.pipe(browserSync.reload({
 			stream: true
 		}));
-
 });
+
+gulp.task('default', () =>
+    gulp.src('src/img/*')
+        .pipe(imagemin())
+        .pipe(gulp.dest('./dist/img'))
+);
 
 gulp.task('livereload', (serverConfig) => {
 	browserSync({
@@ -49,5 +57,22 @@ gulp.task('watch', () => {
 	});
 });
 
+// production building
+
+gulp.task('uglyCss', () => {
+	gulp.src('./src/sass/main.sass')
+		.pipe(sass({
+			outputStyle: 'compressed'
+		}).on('error', sass.logError))
+		.pipe(gulp.dest('./dist/css'))
+});
+
+gulp.task('uglyJs', function() {
+	gulp.src('./src/js/*.js')
+		.pipe(uglify())
+		.pipe(concat('main.js'))
+		.pipe(gulp.dest('./dist/js'))
+});
 
 gulp.task('dev', ['html', 'sass', 'js', 'livereload', 'watch']);
+gulp.task('prod', ['html', 'uglyCss', 'uglyJs']);
