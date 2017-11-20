@@ -1,9 +1,10 @@
 'use strict'
 
 const gulp = require('gulp'),
-watch = require('gulp-watch'),
-browserSync = require('browser-sync'),
-sass = require('gulp-sass');
+	watch = require('gulp-watch'),
+	browserSync = require('browser-sync'),
+	sass = require('gulp-sass'),
+	concat = require('gulp-concat');
 
 gulp.task('html', () => {
 	gulp.src('./src/*.html')
@@ -21,24 +22,32 @@ gulp.task('sass', () => {
 			stream: true
 		}));
 });
+gulp.task('js', () => {
+
+	gulp.src('./src/js/*.js')
+		.pipe(concat('main.js'))
+		.pipe(gulp.dest('./dist/js'))
+		.pipe(browserSync.reload({
+			stream: true
+		}));
+
+});
 
 gulp.task('livereload', (serverConfig) => {
-	browserSync({	
-			server: {
-				baseDir: "./dist"
-			},
-			tunnel: true,
-			port: 9000,
-			files: ["css/main.css"]
-		}
-	);
+	browserSync({
+		server: {
+			baseDir: "./dist"
+		},
+		tunnel: true,
+		port: 9000
+	});
 });
 
 gulp.task('watch', () => {
-	watch(['./src/**/*.html', './src/sass/**/*.sass', './src/sass/**/*.scss'], function() {
-		gulp.start(['html', 'sass']);
+	watch(['./src/**/*.html', './src/sass/**/*.sass', './src/sass/**/*.scss', './src/js/**/*.js'], function () {
+		gulp.start(['html', 'sass', 'js']);
 	});
 });
 
 
-gulp.task('dev', ['html', 'sass', 'livereload', 'watch']);
+gulp.task('dev', ['html', 'sass', 'js', 'livereload', 'watch']);
