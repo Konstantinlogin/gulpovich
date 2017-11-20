@@ -1,0 +1,17 @@
+{
+  "name": "gulpovich",
+  "version": "1.0.0",
+  "description": "Gulpovich, Vasiliy Petrovich. Это сборка gulp. Вот и всё. Не на что тут смотреть. Расходитесь по домам.",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
+    "gulp-watch": "^4.3.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Konstantinlogin",
+  "license": "ISC"
+}
