@@ -7,7 +7,9 @@ const gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglifyjs'),
 	imagemin = require('gulp-imagemin'),
-	del = require('del');
+	del = require('del'),
+	babel = require('gulp-babel')
+
 
 gulp.task('html', () => {
 	gulp.src('./src/*.html')
@@ -26,14 +28,11 @@ gulp.task('sass', () => {
 		}));
 });
 
-gulp.task('js', () => {
-	gulp.src('./src/js/*.js')
-		.pipe(concat('main.js'))
+gulp.task('js', () =>
+	gulp.src('./src/js/main.js')
+		.pipe(babel())
 		.pipe(gulp.dest('./dist/js'))
-		.pipe(browserSync.reload({
-			stream: true
-		}));
-});
+);
 
 gulp.task('img', () => {
 	gulp.src('./src/img/*')
@@ -103,8 +102,8 @@ gulp.task('uglyCss', () => {
 
 gulp.task('uglyJs', function () {
 	gulp.src('./src/js/*.js')
+		.pipe(babel())
 		.pipe(uglify())
-		.pipe(concat('main.js'))
 		.pipe(gulp.dest('./dist/js'))
 });
 

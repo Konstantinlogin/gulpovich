@@ -1,3 +1,1 @@
-$(document).ready(function(){
-    $('body').addClass('test-jq')
-});
+let varible = 'test babel';

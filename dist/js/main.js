@@ -1,3 +1,1 @@
-$(document).ready(function(){
-    $('body').addClass('test-jq')
-});
+"use strict";var varible="test babel";
