@@ -6,7 +6,8 @@ const gulp = require('gulp'),
 	sass = require('gulp-sass'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglifyjs'),
-	imagemin = require('gulp-imagemin');
+	imagemin = require('gulp-imagemin'),
+	del = require('del');
 
 gulp.task('html', () => {
 	gulp.src('./src/*.html')
@@ -25,7 +26,6 @@ gulp.task('sass', () => {
 		}));
 });
 
-
 gulp.task('js', () => {
 	gulp.src('./src/js/*.js')
 		.pipe(concat('main.js'))
@@ -35,11 +35,30 @@ gulp.task('js', () => {
 		}));
 });
 
-gulp.task('default', () =>
-    gulp.src('src/img/*')
-        .pipe(imagemin())
-        .pipe(gulp.dest('./dist/img'))
-);
+gulp.task('img', () => {
+	gulp.src('./src/img/*')
+		.pipe(imagemin())
+		.pipe(gulp.dest('./dist/img'))
+		.pipe(browserSync.reload({
+			stream: true
+		}));
+});
+
+gulp.task('fonts', () => {
+	gulp.src('./src/fonts/*')
+		.pipe(gulp.dest('./dist/fonts'))
+		.pipe(browserSync.reload({
+			stream: true
+		}));
+});
+
+gulp.task('delete-img', function (cb) {
+ 	return del('./dist/img', cb)
+ });
+
+ gulp.task('delete-fonts', function (cb) {
+ 	return del('./dist/fonts', cb);
+ });
 
 gulp.task('livereload', (serverConfig) => {
 	browserSync({
@@ -52,12 +71,27 @@ gulp.task('livereload', (serverConfig) => {
 });
 
 gulp.task('watch', () => {
-	watch(['./src/**/*.html', './src/sass/**/*.sass', './src/sass/**/*.scss', './src/js/**/*.js'], function () {
-		gulp.start(['html', 'sass', 'js']);
-	});
+	watch(
+		[
+			'./src/**/*.html',
+			'./src/sass/**/*.sass',
+			'./src/sass/**/*.scss',
+			'./src/js/**/*.js',
+			'./src/img/*',
+			'./src/fonts/*'
+		],
+		function () {
+			gulp.start([
+				'html',
+				'sass',
+				'js',
+				'img',
+				'delete-img',
+				'fonts',
+				'delete-fonts'
+			]);
+		});
 });
-
-// production building
 
 gulp.task('uglyCss', () => {
 	gulp.src('./src/sass/main.sass')
@@ -67,12 +101,12 @@ gulp.task('uglyCss', () => {
 		.pipe(gulp.dest('./dist/css'))
 });
 
-gulp.task('uglyJs', function() {
+gulp.task('uglyJs', function () {
 	gulp.src('./src/js/*.js')
 		.pipe(uglify())
 		.pipe(concat('main.js'))
 		.pipe(gulp.dest('./dist/js'))
 });
 
-gulp.task('dev', ['html', 'sass', 'js', 'livereload', 'watch']);
-gulp.task('prod', ['html', 'uglyCss', 'uglyJs']);
+gulp.task('dev', ['html', 'sass', 'js', 'img', 'delete-img', 'fonts', 'delete-fonts', 'livereload', 'watch']);
+gulp.task('prod', ['html', 'uglyCss', 'uglyJs', 'img', 'delete-img', 'fonts', 'delete-fonts',]);
